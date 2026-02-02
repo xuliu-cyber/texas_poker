@@ -1,0 +1,6 @@
+flask==3.0.2
+flask-socketio==5.3.6
+eventlet==0.35.2
+treys==0.1.8
+tornado>=6.4.1
+tornado>=6.4

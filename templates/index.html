@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Texas Hold'em (LAN)</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brandTitle">Texas Hold'em (LAN)</div>
+          <div class="brandSub">新手友好 · 局域网联机 · 免安装客户端</div>
+        </div>
+        <div class="status" id="connStatus">disconnected</div>
+      </header>
+
+      <section class="panel" id="lobbyPanel">
+        <div class="row">
+          <div class="field">
+            <label>昵称</label>
+            <input id="name" placeholder="Alice" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>房间号</label>
+            <input id="room" placeholder="room1" value="room1" autocomplete="off" />
+          </div>
+          <div class="field grow"></div>
+          <button id="btnJoin" class="primary">加入房间</button>
+          <button id="btnLeave" disabled>离开</button>
+          <button id="btnReady" disabled class="primary">准备 / 取消</button>
+          <button id="btnStart" disabled class="warn">开始新一局</button>
+          <button id="btnBuyin" disabled class="primary">买入 +1000</button>
+        </div>
+        <div class="lobbyHint" id="lobbyHint">
+          提示：所有玩家输入同一个房间号即可同桌。至少 2 人加入后，所有人点「准备」，再点「开始」。
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="col">
+          <div class="panel">
+            <div class="tableHeader">
+              <div class="tableMeta">
+                <div class="kv"><span class="k">局数</span><span class="v" id="handNo">0</span></div>
+                <div class="kv"><span class="k">阶段</span><span class="v" id="stage">waiting</span></div>
+                <div class="kv"><span class="k">底池</span><span class="v" id="pot">0</span></div>
+                <div class="kv"><span class="k">当前下注</span><span class="v" id="currentBet">0</span></div>
+                <div class="kv"><span class="k">最小加注</span><span class="v" id="minRaise">0</span></div>
+              </div>
+              <div class="turnHint" id="turnHint"></div>
+            </div>
+
+            <div class="tableStage">
+              <div class="center">
+                <div class="board" id="board"></div>
+                <div class="myHandWrap">
+                  <div class="myHandTitle">你的手牌</div>
+                  <div id="myHand" class="cards"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel actionPanel">
+            <div class="actions">
+              <button id="btnFold" disabled class="danger">弃牌</button>
+              <button id="btnCheck" disabled>过牌</button>
+              <button id="btnCall" disabled>跟注</button>
+              <div class="raiseBox">
+                <div class="raiseTop">
+                  <div class="mini">加注到</div>
+                  <input id="raiseTo" type="number" min="0" step="1" />
+                  <button id="btnRaise" disabled class="primary">加注</button>
+                </div>
+                <input id="raiseSlider" type="range" min="0" max="0" step="1" value="0" />
+                <div class="raiseQuick">
+                  <button id="btnR2x" disabled>2x</button>
+                  <button id="btnR3x" disabled>3x</button>
+                  <button id="btnR4x" disabled>4x</button>
+                  <button id="btnRThirdPot" disabled>1/3 Pot</button>
+                  <button id="btnRHalfPot" disabled>1/2 Pot</button>
+                  <button id="btnRPot" disabled>Pot</button>
+                  <button id="btnRAllIn" disabled class="warn">All-in</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="rulesHint">
+              新手提示：
+              <span class="pill">过牌</span> = 不下注且保留继续资格；
+              <span class="pill">跟注</span> = 补齐到当前下注；
+              <span class="pill">加注</span> = 提高本轮下注额。
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>聊天</h3>
+            <div class="chat" id="chat"></div>
+            <div class="row">
+              <input id="chatText" placeholder="输入聊天内容，回车发送" />
+              <button id="btnChat" disabled class="primary">发送</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="panel">
+            <h3>玩家列表</h3>
+            <div class="playerTable" id="playerTable">
+              <div class="playerRow head">
+                <div>玩家</div>
+                <div>积分</div>
+                <div>净积分</div>
+                <div>庄</div>
+                <div>小盲</div>
+                <div>大盲</div>
+                <div>枪口</div>
+              </div>
+              <div id="players"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>日志</h3>
+            <div id="logs" class="logs"></div>
+          </div>
+
+          <div class="panel">
+            <h3>提示 / 错误</h3>
+            <div id="errors" class="errors"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" aria-live="polite"></div>
+
+    <script src="/static/client.js"></script>
+  </body>
+</html>
