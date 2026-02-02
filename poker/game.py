@@ -100,6 +100,16 @@ class Table:
         idx = order.index(current)
         return order[(idx - 1) % len(order)]
 
+    @staticmethod
+    def _format_card_html(c: str) -> str:
+        rank = c[:-1].upper()
+        suit = c[-1].lower()
+        suit_map = {'s': '♠', 'h': '♥', 'd': '♦', 'c': '♣'}
+        if rank == 'T':
+            rank = '10'
+        color = '#ff8585' if suit in 'hd' else 'inherit'
+        return f'<span style="color:{color};font-weight:700;">{rank}{suit_map.get(suit, suit)}</span>'
+
     def _active_seats(self, players_by_seat: dict[int, Player]) -> list[int]:
         return [
             seat
@@ -619,14 +629,11 @@ class GameRoom:
 
             self.add_log("摊牌结算")
 
-            # Log best hand per (non-folded) player, using nicknames.
-            # for seat, score in result.ranking:
-            #     p = players_by_seat[seat]
-            #     rank_class = evaluator.get_rank_class(score)
-            #     class_en = evaluator.class_to_string(rank_class)
-            #     class_name = class_zh.get(class_en, class_en)
-            #     pretty_five = Card.ints_to_pretty_str(best_five_cards(seat))
-            #     self.add_log(f"{p.name} 最大牌面：{class_name} {pretty_five}")
+            # 显示手牌
+            for seat, _ in result.ranking:
+                p = players_by_seat[seat]
+                hand_html = ' '.join(Table._format_card_html(c) for c in p.hand)
+                self.add_log(f"{p.name} 手牌：{hand_html}")
 
             # Also note folded players.
             for p in sorted(players_by_seat.values(), key=lambda x: x.seat):

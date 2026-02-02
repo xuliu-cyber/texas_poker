@@ -222,6 +222,13 @@ function renderState(state) {
   setQuickRaiseButtons(isMyTurn);
   setRaiseControls(state, me, isMyTurn);
 
+  // Set ready button text
+  if (me && me.ready) {
+    $("btnReady").textContent = "取消准备";
+  } else {
+    $("btnReady").textContent = "准备";
+  }
+
   // If current bet is 0, call button is effectively check; still ok.
 }
 
